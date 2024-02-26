@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 
 function Home() {
   const [data, setData] = useState([]);
-  const navigate=useNavigate()
+  const navigate = useNavigate();
   const FilterOption = [
     "smartphones",
     "laptops",
@@ -30,16 +30,22 @@ function Home() {
   ];
   const [currentPage, setCurrentpage] = useState(1);
   const [search, setSearch] = useState("");
-  const [filterdata, setfilterdata] = useState("");
+  const [filterdata, setFilterData] = useState("All"); // Initialize with "All"
 
   const recordsperpage = 10;
   const lastIndex = currentPage * recordsperpage;
   const firstIndex = lastIndex - recordsperpage;
+
   const filteredData = search
     ? data.filter((item) => item.title.toLowerCase().includes(search.toLowerCase()))
     : data;
-  const records = filteredData.slice(firstIndex, lastIndex);
-  const npage = Math.ceil(filteredData.length / recordsperpage);
+
+  const filteredAndSelectedData = filterdata !== "All"
+    ? filteredData.filter((item) => item.category === filterdata)
+    : filteredData;
+
+  const records = filteredAndSelectedData.slice(firstIndex, lastIndex);
+  const npage = Math.ceil(filteredAndSelectedData.length / recordsperpage);
   const numbers = [...Array(npage + 1).keys()].slice(1);
 
   const getData = async () => {
@@ -51,36 +57,24 @@ function Home() {
     }
   };
 
+  useEffect(() => {
+    getData();
+  }, []);
+
   const handleProductDetails = (index) => {
     const isLoggedIn = false; // Replace with your logic to check if the user is logged in
 
     if (isLoggedIn) {
-        navigate(`/description/${index}`);
+      navigate(`/description/${index}`);
     } else {
       // Redirect the user to the login page
       navigate('/login');
     }
   };
 
-  useEffect(() => {
-    getData();
-  }, []);
-
-  useEffect(() => {
-    if (filterdata === "smartphones") {
-      const filteredData = data.filter((item) => item.category === "smartphones");
-      setData(filteredData);
-    } else if (filterdata === "laptops") {
-      const filteredData = data.filter((item) => item.category === "laptops");
-      setData(filteredData);
-    } else {
-      getData();
-    }
-  }, [filterdata]);
-
   const handleSort = (event) => {
     const selectedFilter = event.target.value;
-    setfilterdata(selectedFilter);
+    setFilterData(selectedFilter);
     setSearch("");
   };
 
@@ -107,8 +101,8 @@ function Home() {
 
   return (
     <>
-      <select onChange={handleSort} value={filterdata}>
-        <option>Filter</option>
+       <select onChange={handleSort} value={filterdata}>
+        <option value="All">All</option> {/* Render "All" option */}
         {FilterOption.map((item, index) => (
           <option value={item} key={index}>
             {item}
