@@ -125,13 +125,14 @@ function Home() {
             style={{ width: "18rem", display: "inline-block", margin: "10px" }}
             key={item.id}
           >
-            <img src={""} class="card-img-top" alt="images" />
+            <img src={item.images[0]} style={{height:"200px",width:"200px"}} class="card-img-top" alt="images" />
             <div class="card-body">
               <h5>{item.title}</h5>
               <p class="card-text">{item.description}</p>
               <Link to={`/description/${index}`}>
                 <button>Product Details</button>
               </Link>
+              
             </div>
           </div>
         ))}

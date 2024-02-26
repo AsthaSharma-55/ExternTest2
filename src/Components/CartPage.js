@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 
 function CartPage() {
@@ -10,6 +10,17 @@ function CartPage() {
   const price = searchParams.get('price');
 
   const [quantity, setQuantity] = useState(1);
+
+  useEffect(() => {
+    const storedQuantity = localStorage.getItem('cartQuantity');
+    if (storedQuantity) {
+      setQuantity(parseInt(storedQuantity));
+    }
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem('cartQuantity', quantity.toString());
+  }, [quantity]);
 
   const handleAddItem = () => {
     setQuantity(quantity + 1);
@@ -31,7 +42,7 @@ function CartPage() {
       <h3>{title}</h3>
       <p>{description}</p>
       <p>Quantity: {quantity}</p>
-      <p>price: {price}</p>
+      <p>Price: {price}</p>
       <p>Total: {calculateTotal()}</p>
       <button onClick={handleAddItem}>Add Item</button>
       <button onClick={handleRemoveItem}>Remove Item</button>
